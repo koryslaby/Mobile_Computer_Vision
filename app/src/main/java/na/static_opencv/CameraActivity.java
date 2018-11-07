@@ -1,5 +1,6 @@
 package na.static_opencv;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -20,8 +21,16 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
@@ -39,13 +48,43 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 
     public static int Affect = 0;
 
-
+    private CascadeClassifier cascadeClassifier;
+    private int absoluteFaceSize;
     // These variables are used (at the moment) to fix camera orientation from 270degree to 0degree
     Mat mRgba;
     Mat mRgbaF;
     Mat mRgbaT;
     Mat transform;
 
+
+    private void initializeOpenCVDependencies() {
+
+        try {
+            // Copy the resource into a temp file so OpenCV can load it
+            InputStream is = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
+            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+            File mCascadeFile;
+            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+
+            // Load the cascade classifier
+            cascadeClassifier = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+        } catch (Exception e) {
+            Log.e("OpenCVActivity", "Error loading cascade", e);
+        }
+
+        // And we are ready to go
+        mOpenCvCameraView.enableView();
+    }
 
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -55,6 +94,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     Log.i(TAG, "OpenCV loaded successfully");
+                    initializeOpenCVDependencies();
                     mOpenCvCameraView.enableView();
                 } break;
                 default:
@@ -133,6 +173,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
         // TODO Auto-generated method stub
         mRgba = inputFrame.rgba();
         transform = inputFrame.rgba();
+        Mat grey = new Mat();
         int orientation = this.getResources().getConfiguration().orientation;
         // Log.i(TAG, "the orientation is " + orientation);
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -158,10 +199,19 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
                 Imgproc.erode(mRgba, mRgba, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20, 20)));
                 break;
             case 5:
-                Mat grey = new Mat();
                 Imgproc.cvtColor(mRgba, grey, Imgproc.COLOR_BGR2GRAY, 4 );
                 Imgproc.Canny(grey, mRgba, 60, 60*3, 3,false);
                 break;
+            case 6:
+                MatOfRect faces = new MatOfRect();
+                Imgproc.cvtColor(mRgba, grey, Imgproc.COLOR_BGR2GRAY, 4 );
+                if (cascadeClassifier != null) {
+                    cascadeClassifier.detectMultiScale(grey, faces, 1.1, 2, 2,
+                            new Size(absoluteFaceSize, absoluteFaceSize), new Size());
+                }
+                Rect[] facesArray = faces.toArray();
+                for (int i = 0; i <facesArray.length; i++)
+                    Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);
             default:
                 break;
         }

@@ -31,6 +31,8 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         button5.setOnClickListener(this);
         Button button6 = findViewById(R.id.button6);
         button6.setOnClickListener(this);
+        Button button7 = findViewById(R.id.button7);
+        button7.setOnClickListener(this);
 
     }
     @Override
@@ -61,8 +63,12 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
                 CameraActivity.Affect = 5;
                 Log.i(TAG2, "clicked button 6");
                 break;
-            default:
+            case R.id.button7:
                 CameraActivity.Affect = 6;
+                Log.i(TAG2, "clicked face detection");
+                break;
+            default:
+                CameraActivity.Affect = 7;
                 break;
         }
 

@@ -10,4 +10,5 @@
     <string name="Edge_Detection">Edge Detection</string>
     <string name="Default">Default</string>
     <string name="Main_Menu">Main Menu</string>
+    <string name="Face_Detection">Face Detection</string>
 </resources>
