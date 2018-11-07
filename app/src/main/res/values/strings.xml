@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Static_OpenCV</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_selection">SelectionActivity</string>
+    <string name="Median_Blur">Median Blur</string>
+    <string name="Gray">Gray</string>
+    <string name="Flip">Flip</string>
+    <string name="Dilate">Dilate</string>
+    <string name="Erode">Erode</string>
+    <string name="Edge_Detection">Edge Detection</string>
+    <string name="Default">Default</string>
+    <string name="Main_Menu">Main Menu</string>
+</resources>
