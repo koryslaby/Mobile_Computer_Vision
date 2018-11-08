@@ -7,3 +7,4 @@ This respository is for my mobile computer vision class.
   
 # Needing to fix:
   - Frame rate is very slow.
+  - App only works on Android Device, not emulator(I tested it on a android device api 19).
