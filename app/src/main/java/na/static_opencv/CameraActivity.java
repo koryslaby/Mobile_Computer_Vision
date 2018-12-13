@@ -179,7 +179,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             Core.transpose(mRgba, mRgbaT);
             Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 1,1, 1);
-            //Core.flip(mRgbaF, mRgba, 1 );
+            Core.flip(mRgba, mRgba, 1 );
         }
 
         switch (Affect){
