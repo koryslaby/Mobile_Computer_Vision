@@ -79,7 +79,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
             // Load the cascade classifier
             cascadeClassifier = new CascadeClassifier(mCascadeFile.getAbsolutePath());
         } catch (Exception e) {
-            Log.e("OpenCVActivity", "Error loading cascade", e);
+            Log.e(TAG, "Error loading cascade", e);
         }
 
         // And we are ready to go
@@ -179,7 +179,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             Core.transpose(mRgba, mRgbaT);
             Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 1,1, 1);
-            Core.flip(mRgbaF, mRgba, 1 );
+            //Core.flip(mRgbaF, mRgba, 1 );
         }
 
         switch (Affect){
